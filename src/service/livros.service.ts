@@ -1,31 +1,33 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
 import { Livro } from '../schema/livro.model';
 
 @Injectable()
 export class LivrosService {
-  livros: Livro[] = [
-    // new Livro("LIV01", "Livro TDD e BDD na prática", 29.90),
-    // new Livro("LIV02", "Livro Iniciando com Flutter", 39.90),
-    // new Livro("LIV03", "Inteligência artificial como serviço", 29.90),
-  ];
+  constructor(@InjectModel(Livro) private livroModel: typeof Livro) {}
 
-  getAll(): Livro[] {
-    return this.livros;
+  async getAll(): Promise<Livro[]> {
+    return this.livroModel.findAll();
   }
 
-  getId(id: number): Livro {
-    return this.livros[0];
+  async getId(id: number): Promise<Livro> {
+    return this.livroModel.findByPk(id);
   }
 
-  create(livro: Livro) {
-    this.livros.push(livro);
+  async create(livro: Livro) {
+    this.livroModel.create(livro);
   }
 
-  update(livro: Livro): Livro {
-    return livro;
+  async update(livro: Livro): Promise<[number, Livro[]]> {
+    return this.livroModel.update(livro, {
+      where: {
+        id: livro.id,
+      },
+    });
   }
 
-  delete(id: number) {
-    this.livros.pop();
+  async delete(id: number) {
+    const livro: Livro = await this.getId(id);
+    livro.destroy();
   }
 }
