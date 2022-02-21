@@ -7,7 +7,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { Produto } from 'src/model/produto.model';
+import { Produto } from 'src/schema/produto.model';
 
 @Controller('produtos')
 export class ProdutosController {
